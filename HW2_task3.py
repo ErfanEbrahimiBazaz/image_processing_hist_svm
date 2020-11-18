@@ -6,11 +6,12 @@ import os
 from sklearn.model_selection import train_test_split
 from sklearn import svm
 from sklearn import metrics
+from sklearn.preprocessing import MinMaxScaler
 
 
 
 '''
-1- Download images from Internet by using scripts.
+1- Download images from Internet by usin scripts.
 2- Images are for day and night.
 3- Use the same number of images to train the model, and the same size.
 4- Preprocess images by using either kmeans or geometric transformation (log transform of task 1)
@@ -114,24 +115,24 @@ dir_list = os.listdir(src_path)
 dest_path = r'C:\Users\E17538\OneDrive - Uniper SE\Desktop\DailyActivities\FAD\ACV_Ses3\HW_Ses3\task3_prcimgs'
 labels = []
 # preprocessing: applying log transformation to all cars
-for fol in dir_list:
-    labels.append(fol)
-for label in labels:
-    day_night_path = os.path.join(src_path, label)
-    # print(car_category_path)
-    day_night_images = [f for f in os.listdir(day_night_path) if os.path.isfile(os.path.join(day_night_path, f))]
-    new_dest_path = os.path.join(dest_path, label)
-    print(new_dest_path)
-    try:
-        os.mkdir(new_dest_path)
-    except OSError:
-        print("Creation of the directory %s failed" % new_dest_path)
-    else:
-        print("Successfully created the directory %s " % new_dest_path)
-    for img in day_night_images:
-        print(img)
-        print(new_dest_path)
-        log_transform(day_night_path, img, new_dest_path)
+# for fol in dir_list:
+#     labels.append(fol)
+# for label in labels:
+#     day_night_path = os.path.join(src_path, label)
+#     # print(car_category_path)
+#     day_night_images = [f for f in os.listdir(day_night_path) if os.path.isfile(os.path.join(day_night_path, f))]
+#     new_dest_path = os.path.join(dest_path, label)
+#     print(new_dest_path)
+#     try:
+#         os.mkdir(new_dest_path)
+#     except OSError:
+#         print("Creation of the directory %s failed" % new_dest_path)
+#     else:
+#         print("Successfully created the directory %s " % new_dest_path)
+#     for img in day_night_images:
+#         print(img)
+#         print(new_dest_path)
+#         log_transform(day_night_path, img, new_dest_path)
 
 # extract feature vector by histogram
 scores = []
@@ -165,8 +166,15 @@ for biin in range(3, 18):
     print(X)
     print(len(X))
     print('y is {}'.format(y))
+
+    # scaling feature data to make SVM model training much faster
+    scaler = MinMaxScaler()
+    scaler.fit(X)
+    MinMaxScaler()
+    X = scaler.transform(X)
+
     # split dataset into train and test data
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=1, stratify=y)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1, stratify=y)
 
     # Create a svm Classifier
     clf = svm.SVC(kernel='linear')  # Linear Kernel
